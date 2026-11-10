@@ -3,30 +3,32 @@ public class Sandbox
     public int Width { get; private set; }
     public int Height { get; private set; }
     public int Length => Width * Height;
-    public uint[] Pixels { get; private set; }
+    public uint[,] Pixels { get; private set; }
 
     public Sandbox(int width, int height)
     {
-        Pixels = new uint[width * height];
+        Width = width;
+        Height = height;
+        Pixels = new uint[width, height];
     }
 
     public int Index(int x, int y)
     {
-        return (Height - y) * Height + x;
+        return (Height - 1 - y) * Height + x;
     }
 
-    public void SetPixel(int x, int y, Material material)
+    public void SetPixel(int x, int y, Mat material)
     {
-        Pixels[Index(x, y)] = Msk.SetMaterial(0, material);
+        Pixels[x, y] = Msk.SetMaterial(0, material);
     }
 
     public uint GetPixel(int x, int y)
     {
-        return Pixels[Index(x, y)];
+        return Pixels[x, y];
     }
 
-    public Material GetPixelMat(int x, int y)
+    public Mat GetPixelMat(int x, int y)
     {
-        return Msk.GetMaterial(Pixels[Index(x, y)]);
+        return Msk.GetMat(Pixels[x, y]);
     }
 }

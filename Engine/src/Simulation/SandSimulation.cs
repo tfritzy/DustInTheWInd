@@ -4,37 +4,56 @@ public static class SandSimulation
     {
         int width = sandbox.Width;
         int height = sandbox.Height;
-        uint[] pixels = sandbox.Pixels;
+        uint[,] pixels = sandbox.Pixels;
 
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                int index = sandbox.Index(x, y);
-                Material mat = Msk.GetMaterial(pixels[index]);
+                Mat mat = Msk.GetMat(pixels[x, y]);
 
                 switch (mat)
                 {
-                    case Material.Air:
+                    case Mat.Air:
                         continue;
-                    case Material.Sand:
-                        ProcessPowder(sandbox, pixels, x, y, index);
+                    case Mat.Sand:
+                        ProcessPowder(sandbox, pixels, x, y);
                         break;
-                    case Material.Stone:
+                    case Mat.Stone:
                         break;
                 }
             }
         }
     }
 
-    public static void ProcessPowder(Sandbox sandbox, uint[] pixels, int x, int y, int index)
+    public static void ProcessPowder(Sandbox sandbox, uint[,] pixels, int x, int y)
     {
-        int downI = sandbox.Index(x, y + 1);
-        uint down = pixels[downI];
-        if (Msk.GetMaterial(down) == Material.Air)
+        int index = sandbox.Index(x, y);
+
+        if (TrySwap(sandbox, pixels, x, y, x, y - 1))
+            return;
+
+        if (TrySwap(sandbox, pixels, x, y, x - 1, y - 1))
+            return;
+
+        if (TrySwap(sandbox, pixels, x, y, x + 1, y - 1))
+            return;
+    }
+
+    private static bool TrySwap(Sandbox sandbox, uint[,] pixels, int sx, int sy, int tx, int ty)
+    {
+        if (ty < 0) return false;
+        if (tx < 0) return false;
+        if (tx >= sandbox.Width) return false;
+
+        uint target = pixels[tx, ty];
+        if (Msk.GetMat(target) == Mat.Air)
         {
-            pixels[downI] = pixels[index];
-            pixels[index] = Msk.SetMaterial(0u, Material.Air);
+            pixels[tx, ty] = pixels[sx, sy];
+            pixels[sx, sy] = target;
+            return true;
         }
+
+        return false;
     }
 }
