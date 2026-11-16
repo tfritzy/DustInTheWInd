@@ -33,20 +33,19 @@ public sealed class SandSimulationTests
     }
 
     [TestMethod]
-    public void SandSimulation_Perf()
+    public void SandSimulation_WaterSpreads()
     {
-        Sandbox box = new(1000, 1000);
-        for (int x = 0; x < 1000; x++)
-        {
-            for (int y = 0; y < 1000; y++)
-            {
-                box.Pixels[x, y] = Msk.SetMaterial(0, Mat.Sand);
-            }
-        }
+        Sandbox box = new(3, 3);
+        box.SetPixel(0, 0, Mat.Sand);
+        box.SetPixel(1, 0, Mat.Sand);
+        box.SetPixel(0, 1, Mat.Water);
 
-        for (int i = 0; i < 200; i++)
-        {
-            SandSimulation.Step(box);
-        }
+        SandSimulation.Step(box);
+
+        Assert.AreEqual(Mat.Water, box.GetPixelMat(1, 1), box.ToString());
+
+        SandSimulation.Step(box);
+
+        Assert.AreEqual(Mat.Water, box.GetPixelMat(2, 0), box.ToString());
     }
 }

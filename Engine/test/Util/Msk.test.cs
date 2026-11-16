@@ -17,4 +17,20 @@ public sealed class MskTests
         uint src = 0b_10101010_11001100_11001100_11001100;
         Assert.AreEqual<uint>(0b_00000001_11001100_11001100_11001100, Msk.SetMaterial(src, Mat.Sand));
     }
+
+    [TestMethod]
+    public void Processed_SetsBackAndForth()
+    {
+        uint src = 0b_10101010_11001100_11001100_11001100;
+        Assert.AreEqual<uint>(0b_10101010_11001100_11001100_11001101, Msk.SetProcessed(src, true));
+        Assert.AreEqual<uint>(0b_10101010_11001100_11001100_11001100, Msk.SetProcessed(src, false));
+
+        src = 0b_10101010_11001100_11001100_11001101;
+        Assert.AreEqual<uint>(0b_10101010_11001100_11001100_11001101, Msk.SetProcessed(src, true));
+        Assert.AreEqual<uint>(0b_10101010_11001100_11001100_11001100, Msk.SetProcessed(src, false));
+
+        src = 0b_10101010_11001100_11001100_11001101;
+        Assert.AreEqual<uint>(0b_10101010_11001100_11001100_11001100, Msk.ToggleProcessed(src));
+        Assert.AreEqual<uint>(0b_10101010_11001100_11001100_11001101, Msk.ToggleProcessed(Msk.ToggleProcessed(src)));
+    }
 }

@@ -2,5 +2,6 @@ public enum Mat
 {
     Air,
     Sand,
-    Stone
+    Stone,
+    Water
 }

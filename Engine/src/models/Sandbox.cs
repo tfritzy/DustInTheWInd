@@ -1,3 +1,6 @@
+using System.Security.Principal;
+using System.Text;
+
 public class Sandbox
 {
     public int Width { get; private set; }
@@ -12,23 +15,47 @@ public class Sandbox
         Pixels = new uint[width, height];
     }
 
-    public int Index(int x, int y)
-    {
-        return (Height - 1 - y) * Height + x;
-    }
-
     public void SetPixel(int x, int y, Mat material)
     {
         Pixels[x, y] = Msk.SetMaterial(0, material);
     }
 
-    public uint GetPixel(int x, int y)
-    {
-        return Pixels[x, y];
-    }
-
     public Mat GetPixelMat(int x, int y)
     {
         return Msk.GetMat(Pixels[x, y]);
+    }
+
+    public override string ToString()
+    {
+        StringBuilder sb = new();
+        sb.Append('\n');
+        for (int y = Height - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                sb.Append(GetPixelMat(x, y).ToString()[0]);
+                sb.Append(' ');
+            }
+            sb.Append('\n');
+        }
+
+        return sb.ToString();
+    }
+
+    public string GetProcessedString()
+    {
+        StringBuilder sb = new();
+        sb.Append('\n');
+        for (int y = Height - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                sb.Append(Msk.GetProcessed(Pixels[x, y]) ? "1" : "0");
+                sb.Append(' ');
+            }
+            sb.Append('\n');
+        }
+
+        return sb.ToString();
     }
 }

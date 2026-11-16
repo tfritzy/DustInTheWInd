@@ -1,3 +1,6 @@
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
+
 public static class SandSimulation
 {
     public static void Step(Sandbox sandbox)
@@ -6,38 +9,78 @@ public static class SandSimulation
         int height = sandbox.Height;
         uint[,] pixels = sandbox.Pixels;
 
+        // The value of processed this iteration will flop all pixels to. 
+        bool targetProcessed = !Msk.GetProcessed(pixels[0, 0]);
+
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                Mat mat = Msk.GetMat(pixels[x, y]);
+                if (Msk.GetProcessed(pixels[x, y]) == targetProcessed)
+                    continue;
 
+                Mat mat = Msk.GetMat(pixels[x, y]);
+                var processed = false;
                 switch (mat)
                 {
                     case Mat.Air:
-                        continue;
+                        break;
                     case Mat.Sand:
-                        ProcessPowder(sandbox, pixels, x, y);
+                        processed = ProcessPowder(sandbox, pixels, x, y);
                         break;
                     case Mat.Stone:
                         break;
+                    case Mat.Water:
+                        processed = ProcessLiquid(sandbox, pixels, x, y);
+                        break;
                 }
+
+                if (!processed)
+                    pixels[x, y] = Msk.ToggleProcessed(pixels[x, y]);
             }
         }
+
+        Constraints.Assert(sandbox);
     }
 
-    public static void ProcessPowder(Sandbox sandbox, uint[,] pixels, int x, int y)
+    public static bool ProcessPowder(Sandbox sandbox, uint[,] pixels, int x, int y)
     {
-        int index = sandbox.Index(x, y);
-
         if (TrySwap(sandbox, pixels, x, y, x, y - 1))
-            return;
+            return true;
 
         if (TrySwap(sandbox, pixels, x, y, x - 1, y - 1))
-            return;
+            return true;
 
         if (TrySwap(sandbox, pixels, x, y, x + 1, y - 1))
-            return;
+            return true;
+
+        return false;
+    }
+
+    public static bool ProcessLiquid(Sandbox sandbox, uint[,] pixels, int x, int y)
+    {
+        if (TrySwap(sandbox, pixels, x, y, x, y - 1))
+            return true;
+
+        if (TrySwap(sandbox, pixels, x, y, x - 1, y - 1))
+            return true;
+
+        if (TrySwap(sandbox, pixels, x, y, x + 1, y - 1))
+            return true;
+
+        if (TrySwap(sandbox, pixels, x, y, x + 1, y))
+            return true;
+
+        if (TrySwap(sandbox, pixels, x, y, x - 1, y))
+            return true;
+
+        if (TrySwap(sandbox, pixels, x, y, x + 2, y))
+            return true;
+
+        if (TrySwap(sandbox, pixels, x, y, x - 2, y))
+            return true;
+
+        return false;
     }
 
     private static bool TrySwap(Sandbox sandbox, uint[,] pixels, int sx, int sy, int tx, int ty)
@@ -49,8 +92,9 @@ public static class SandSimulation
         uint target = pixels[tx, ty];
         if (Msk.GetMat(target) == Mat.Air)
         {
-            pixels[tx, ty] = pixels[sx, sy];
-            pixels[sx, sy] = target;
+            var tProc = !Msk.GetProcessed(pixels[sx, sy]);
+            pixels[tx, ty] = Msk.SetProcessed(pixels[sx, sy], tProc);
+            pixels[sx, sy] = Msk.SetProcessed(target, tProc);
             return true;
         }
 
