@@ -1,5 +1,7 @@
 public static class Msk
 {
+    // 0b_TTTTTTTT_XXXXXXYY_YYYYLLLL_RRRRRRBP
+
     public const int MATERIAL_OFFSET = 24;
     public const int MATERIAL_BITS = 8;
     public const uint MAT_MASK = 0b_00000000_11111111_11111111_11111111;

@@ -9,7 +9,7 @@ public static class SandSimulation
         int height = sandbox.Height;
         uint[,] pixels = sandbox.Pixels;
 
-        // The value of processed this iteration will flop all pixels to. 
+        // The value processed will get flipped to this iteration. 
         bool targetProcessed = !Msk.GetProcessed(pixels[0, 0]);
 
         for (int y = 0; y < height; y++)
@@ -90,7 +90,11 @@ public static class SandSimulation
         if (tx >= sandbox.Width) return false;
 
         uint target = pixels[tx, ty];
-        if (Msk.GetMat(target) == Mat.Air)
+        uint source = pixels[sx, sy];
+        int tMat = (int)Msk.GetMat(target);
+        int sMat = (int)Msk.GetMat(source);
+        Console.WriteLine($"{MatProps.Densities[sMat]} > {MatProps.Densities[tMat]}");
+        if (MatProps.Densities[sMat] > MatProps.Densities[tMat])
         {
             var tProc = !Msk.GetProcessed(pixels[sx, sy]);
             pixels[tx, ty] = Msk.SetProcessed(pixels[sx, sy], tProc);
