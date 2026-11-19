@@ -41,11 +41,8 @@ public sealed class SandSimulationTests
         box.SetPixel(0, 1, Mat.Water);
 
         SandSimulation.Step(box);
-
         Assert.AreEqual(Mat.Water, box.GetPixelMat(1, 1), box.ToString());
-
         SandSimulation.Step(box);
-
         Assert.AreEqual(Mat.Water, box.GetPixelMat(2, 0), box.ToString());
     }
 
@@ -53,14 +50,16 @@ public sealed class SandSimulationTests
     public void SandSimulation_SandDisplacesWater()
     {
         Sandbox box = new(2, 3);
-        box.SetPixel(0, 0, Mat.Water);
-        box.SetPixel(1, 0, Mat.Water);
-        box.SetPixel(0, 1, Mat.Sand);
+        box.SetPixel(0, 0, Mat.Stone);
+        box.SetPixel(1, 0, Mat.Stone);
+        box.SetPixel(0, 1, Mat.Water);
+        box.SetPixel(1, 1, Mat.Water);
+        box.SetPixel(0, 2, Mat.Sand);
 
-        Assert.AreEqual(Mat.Water, box.GetPixelMat(0, 0), box.ToString());
-
+        Assert.AreEqual(Mat.Water, box.GetPixelMat(0, 1), box.ToString());
         SandSimulation.Step(box);
-
-        Assert.AreEqual(Mat.Sand, box.GetPixelMat(0, 0), box.ToString());
+        Assert.AreEqual(Mat.Sand, box.GetPixelMat(0, 1), box.ToString());
+        SandSimulation.Step(box);
+        Assert.AreEqual(Mat.Sand, box.GetPixelMat(0, 1), box.ToString());
     }
 }
