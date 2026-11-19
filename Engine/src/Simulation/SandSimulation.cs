@@ -5,9 +5,9 @@ public static class SandSimulation
 {
     public static void Step(Sandbox sandbox)
     {
-        int width = sandbox.Width;
-        int height = sandbox.Height;
-        uint[,] pixels = sandbox.Pixels;
+        int width = sandbox.Pixels.Width;
+        int height = sandbox.Pixels.Height;
+        uint[,] pixels = sandbox.Pixels.Data;
 
         // The value processed will get flipped to this iteration. 
         bool targetProcessed = !Msk.GetProcessed(pixels[0, 0]);
@@ -87,7 +87,7 @@ public static class SandSimulation
     {
         if (ty < 0) return false;
         if (tx < 0) return false;
-        if (tx >= sandbox.Width) return false;
+        if (tx >= pixels.GetLength(0)) return false;
 
         uint target = pixels[tx, ty];
         uint source = pixels[sx, sy];

@@ -8,5 +8,5 @@ public static class MatProps
         {Mat.Stone, new MatPropVals(name:"Stone", density:1f)},
     };
 
-    public static float[] Densities = [.. Props.ToArray().Select(p => p.Value.Density)];
+    public static float[] Densities = [.. Props.ToArray().OrderBy(p => p.Key).Select(p => p.Value.Density)];
 }
