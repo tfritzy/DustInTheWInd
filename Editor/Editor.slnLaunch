@@ -1,0 +1,29 @@
+[
+  {
+    "Name": "DesktopVK",
+    "Projects": [
+      {
+        "Path": "Platforms\\DesktopVK\\Editor.DesktopVK.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Content\\Content.csproj",
+        "Action": "None"
+      }
+    ]
+  }
+  ,
+  {
+    "Name": "WindowsDX12",
+    "Projects": [
+      {
+        "Path": "Platforms\\WindowsDX12\\Editor.WindowsDX12.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Content\\Content.csproj",
+        "Action": "None"
+      }
+    ]
+  }
+]
