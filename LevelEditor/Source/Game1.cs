@@ -2,13 +2,15 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Editor;
+namespace LevelEditor;
 
 public class Game1 : Microsoft.Xna.Framework.Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private Texture2D _batTexture;
+    private Sandbox _sandbox;
+    private Effect _materialShader;
 
     public Game1()
     {
@@ -19,7 +21,7 @@ public class Game1 : Microsoft.Xna.Framework.Game
 
     protected override void Initialize()
     {
-        // TODO: Add your initialization logic here
+        _sandbox = new(1920, 1080);
 
         base.Initialize();
     }
@@ -28,6 +30,7 @@ public class Game1 : Microsoft.Xna.Framework.Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _batTexture = Content.Load<Texture2D>("bat");
+        _materialShader = Content.Load<Effect>("materialShader");
     }
 
     protected override void Update(GameTime gameTime)
@@ -48,7 +51,7 @@ public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
-        _spriteBatch.Begin();
+        _spriteBatch.Begin(effect: _materialShader);
         _spriteBatch.Draw(_batTexture, new Vector2(100, 100), Color.White);
         _spriteBatch.End();
 

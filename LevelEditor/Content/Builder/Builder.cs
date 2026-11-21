@@ -68,10 +68,8 @@ public class Builder : ContentBuilder
         //    }
         // );
 
+        content.Include("materialShader.fx");
         content.Include("bat.png");
-        content.Include("ball.png");
-        content.Include("hit.wav");
-        content.Include("Fonts/Score.spritefont");
 
         return content;
     }

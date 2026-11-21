@@ -2,4 +2,8 @@
   <PropertyGroup>
     <MonoGameVersion>3.8.*</MonoGameVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Engine\src\src.csproj" />
+  </ItemGroup>
 </Project>

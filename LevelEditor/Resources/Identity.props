@@ -12,15 +12,15 @@
   <PropertyGroup>
 
     <!-- The name of the built executable and assembly. -->
-    <AssemblyName>Editor</AssemblyName>
-    <AssemblyTitle>Editor</AssemblyTitle>
+    <AssemblyName>LevelEditor</AssemblyName>
+    <AssemblyTitle>LevelEditor</AssemblyTitle>
 
     <!-- The display name players see. Used for the iOS home screen label. -->
-    <ApplicationTitle>Editor</ApplicationTitle>
+    <ApplicationTitle>LevelEditor</ApplicationTitle>
 
     <!-- Your unique app identity. Change this before publishing to any store.
          Becomes the Android package name and the iOS bundle identifier. -->
-    <ApplicationId>com.companyname.editor</ApplicationId>
+    <ApplicationId>com.companyname.leveleditor</ApplicationId>
 
     <!-- Build number, incremented every store submission. Android versionCode, iOS CFBundleVersion. -->
     <ApplicationVersion>1</ApplicationVersion>

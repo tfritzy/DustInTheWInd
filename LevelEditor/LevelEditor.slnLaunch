@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "DesktopGL",
+    "Projects": [
+      {
+        "Path": "Platforms\\DesktopGL\\LevelEditor.DesktopGL.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Content\\Content.csproj",
+        "Action": "None"
+      }
+    ]
+  }
+]

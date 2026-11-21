@@ -7,7 +7,7 @@
     <RollForward>Major</RollForward>
     <PublishReadyToRun>false</PublishReadyToRun>
     <TieredCompilation>false</TieredCompilation>
-    <MonoGamePlatform>DesktopVK</MonoGamePlatform>
+    <MonoGamePlatform>DesktopGL</MonoGamePlatform>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -28,10 +28,7 @@
     <UpToDateCheckInput Include="..\..\Content\Assets\**\*" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MonoGame.Framework.Native" Version="3.8.6.1" />
-    <PackageReference Include="MonoGame.Runtime.Windows.Vulkan" Version="3.8.6.1" />
-    <PackageReference Include="MonoGame.Runtime.Mac.Vulkan" Version="3.8.6.1" />
-    <PackageReference Include="MonoGame.Runtime.Linux.Vulkan" Version="3.8.6.1" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.6.1" />
   </ItemGroup>
   <Import Project="..\..\Content\BuildContent.targets" />
   <!-- Generates Info.plist for a hand-packaged macOS .app bundle, when building for macOS. -->
