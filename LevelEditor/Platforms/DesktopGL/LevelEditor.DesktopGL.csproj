@@ -2,7 +2,8 @@
   <!-- App name, identity and version come from ..\..\Resources\Identity.props. -->
   <Import Project="..\..\Resources\Identity.props" />
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType Condition="'$(Configuration)' == 'Debug'">Exe</OutputType>
+    <OutputType Condition="'$(Configuration)' != 'Debug'">WinExe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <RollForward>Major</RollForward>
     <PublishReadyToRun>false</PublishReadyToRun>

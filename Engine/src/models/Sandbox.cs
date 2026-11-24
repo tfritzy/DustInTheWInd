@@ -4,6 +4,8 @@ public class Sandbox
 {
     public Pixels Pixels;
     public List<Rigidbody> Rigidbodies;
+    public int Width => Pixels.Width;
+    public int Height => Pixels.Height;
 
     public Sandbox(int width, int height)
     {
