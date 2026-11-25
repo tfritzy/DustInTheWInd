@@ -5,5 +5,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Engine\src\src.csproj" />
+    <ProjectReference Include="..\..\..\Lib\Lib.csproj" />
   </ItemGroup>
 </Project>

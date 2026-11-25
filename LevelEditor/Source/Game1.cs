@@ -5,37 +5,35 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGameLibrary;
 
 namespace LevelEditor;
 
-public class Game1 : Microsoft.Xna.Framework.Game
+public class Game1 : Core
 {
-    private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
     private Texture2D _texture;
     private Sandbox _sandbox;
-    private Effect _materialShader;
     private Color[] _pixelBuffer;
 
-    public Game1()
+    public Game1() : base("Dust in the Wind - Level Editor", 1920, 1080, false)
     {
-        _graphics = new GraphicsDeviceManager(this);
-        Content.RootDirectory = "Content";
-        IsMouseVisible = true;
     }
 
     protected override void Initialize()
     {
-        int w = 750;
-        int h = 400;
+        base.Initialize();
+
+        int w = 1920 / 4;
+        int h = 1080 / 4;
         _sandbox = new(w, h);
         _pixelBuffer = new Color[_sandbox.Pixels.Length];
+        _texture = new Texture2D(GraphicsDevice, _sandbox.Pixels.Width, _sandbox.Pixels.Height);
 
         for (int x = 0; x < _sandbox.Width / 2; x += 2)
         {
             for (int y = 0; y < _sandbox.Height; y += 2)
             {
-                _sandbox.Pixels.SetPixel(x, y, Mat.Water);
+                _sandbox.Pixels.SetPixel(x, y, new Random().Next(0, 2) == 0 ? Mat.Water : Mat.Sand);
             }
         }
 
@@ -44,9 +42,6 @@ public class Game1 : Microsoft.Xna.Framework.Game
 
     protected override void LoadContent()
     {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
-        _texture = new Texture2D(GraphicsDevice, _sandbox.Pixels.Width, _sandbox.Pixels.Height);
-        _materialShader = Content.Load<Effect>("materialShader");
     }
 
     protected override void Update(GameTime gameTime)
@@ -69,7 +64,6 @@ public class Game1 : Microsoft.Xna.Framework.Game
         GraphicsDevice.Clear(Color.White);
 
         var pixels = _sandbox.Pixels.Data;
-        Console.WriteLine(new Color(MatProps.Colors[(int)Mat.Water]));
         var w = pixels.GetLength(0);
         var h = pixels.GetLength(1);
         for (int x = 0; x < w; x++)
@@ -82,9 +76,19 @@ public class Game1 : Microsoft.Xna.Framework.Game
         }
         _texture.SetData(_pixelBuffer);
 
-        _spriteBatch.Begin();
-        _spriteBatch.Draw(_texture, new Vector2(0, 0), Color.White);
-        _spriteBatch.End();
+        Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        Core.SpriteBatch.Draw(
+            _texture,           // texture
+            new Vector2(0, 0),  // position
+            null,               // sourceRectangle
+            Color.White,        // color
+            0.0f,               // rotation
+            Vector2.Zero,       // origin
+            4.0f,               // scale
+            SpriteEffects.None, // effects
+            0.0f                // layerDepth
+        );
+        Core.SpriteBatch.End();
 
         base.Draw(gameTime);
     }

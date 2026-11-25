@@ -13,7 +13,6 @@ public static class MatProps
     private static uint FromHexString(string hex)
     {
         hex = hex[1..];
-        Console.WriteLine(hex);
         var alpha = hex.Length > 6 ? hex.Substring(6, 2) : "FF";
         var r = hex.Substring(0, 2);
         var g = hex.Substring(2, 2);
