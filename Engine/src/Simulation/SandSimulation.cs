@@ -93,7 +93,6 @@ public static class SandSimulation
         uint source = pixels[sx, sy];
         int tMat = (int)Msk.GetMat(target);
         int sMat = (int)Msk.GetMat(source);
-        Console.WriteLine($"{MatProps.Densities[sMat]} > {MatProps.Densities[tMat]}");
         if (MatProps.Densities[sMat] > MatProps.Densities[tMat])
         {
             var tProc = !Msk.GetProcessed(pixels[sx, sy]);
