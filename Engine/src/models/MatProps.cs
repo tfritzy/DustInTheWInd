@@ -5,9 +5,9 @@ public static class MatProps
     public static readonly Dictionary<Mat, MatPropVals> Props = new()
     {
         {Mat.Air, new MatPropVals(name:"Air", density:0, color: FromHexString("#00000000"))},
-        {Mat.Water, new MatPropVals(name:"Water", density:.5f, color: FromHexString("#5555FF"))},
-        {Mat.Sand, new MatPropVals(name:"Sand", density:1f, color: FromHexString("#AA9988"))},
-        {Mat.Stone, new MatPropVals(name:"Stone", density:1f, color: FromHexString("#777777"))},
+        {Mat.Water, new MatPropVals(name:"Water", density:.5f, color: FromHexString("#5a78b2"))},
+        {Mat.Sand, new MatPropVals(name:"Sand", density:1f, color: FromHexString("#f5c47c"))},
+        {Mat.Stone, new MatPropVals(name:"Stone", density:1f, color: FromHexString("#4a4b5b"))},
     };
 
     private static uint FromHexString(string hex)

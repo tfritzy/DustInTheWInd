@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGameLibrary;
+using MonoGameLibrary.Input;
 
 namespace LevelEditor;
 
@@ -53,7 +54,8 @@ public class Game1 : Core
             Exit();
 #endif
 
-        // TODO: Add your update logic here
+        CheckKeyboardInput();
+
         SandSimulation.Step(_sandbox);
 
         base.Update(gameTime);
@@ -61,7 +63,7 @@ public class Game1 : Core
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.White);
+        GraphicsDevice.Clear(new Color(46, 46, 67, 1));
 
         var pixels = _sandbox.Pixels.Data;
         var w = pixels.GetLength(0);
@@ -76,8 +78,8 @@ public class Game1 : Core
         }
         _texture.SetData(_pixelBuffer);
 
-        Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
-        Core.SpriteBatch.Draw(
+        SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        SpriteBatch.Draw(
             _texture,           // texture
             new Vector2(0, 0),  // position
             null,               // sourceRectangle
@@ -88,8 +90,18 @@ public class Game1 : Core
             SpriteEffects.None, // effects
             0.0f                // layerDepth
         );
-        Core.SpriteBatch.End();
+        SpriteBatch.End();
 
         base.Draw(gameTime);
+    }
+
+    private void CheckKeyboardInput()
+    {
+        MouseInfo mouse = Input.Mouse;
+
+        if (Input.Mouse.IsButtonDown(MouseButton.Left))
+        {
+            _sandbox.Pixels.SetPixel(mouse.Position.X / 4, (1080 - 1 - mouse.Position.Y) / 4, Mat.Sand);
+        }
     }
 }
