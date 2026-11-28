@@ -1,103 +1,114 @@
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-
 public static class SandSimulation
 {
     public static void Step(Sandbox sandbox)
     {
-        int width = sandbox.Pixels.Width;
-        int height = sandbox.Pixels.Height;
-        uint[,] pixels = sandbox.Pixels.Data;
-
         // The value processed will get flipped to this iteration. 
-        bool targetProcessed = !Msk.GetProcessed(pixels[0, 0]);
+        bool targetProcessed = !Msk.GetProcessed(sandbox.Chunks[0, 0].Pixels.Data[0, 0]);
 
-        for (int y = 0; y < height; y++)
+        for (int cy = 0; cy < sandbox.Chunks.GetLength(1); cy++)
         {
-            for (int x = 0; x < width; x++)
+            for (int cx = 0; cx < sandbox.Chunks.GetLength(0); cx++)
             {
-                if (Msk.GetProcessed(pixels[x, y]) == targetProcessed)
-                    continue;
-
-                Mat mat = Msk.GetMat(pixels[x, y]);
-                var processed = false;
-                switch (mat)
+                var chunk = sandbox.Chunks[cx, cy];
+                var pixels = chunk.Pixels.Data;
+                for (int x = 0; x < chunk.Width; x++)
                 {
-                    case Mat.Air:
-                        break;
-                    case Mat.Sand:
-                        processed = ProcessPowder(sandbox, pixels, x, y);
-                        break;
-                    case Mat.Stone:
-                        break;
-                    case Mat.Water:
-                        processed = ProcessLiquid(sandbox, pixels, x, y);
-                        break;
-                }
+                    for (int y = 0; y < chunk.Height; y++)
+                    {
+                        if (Msk.GetProcessed(pixels[x, y]) == targetProcessed)
+                            continue;
 
-                if (!processed)
-                    pixels[x, y] = Msk.ToggleProcessed(pixels[x, y]);
+                        Mat mat = Msk.GetMat(pixels[x, y]);
+                        var processed = false;
+                        switch (mat)
+                        {
+                            case Mat.Air:
+                                break;
+                            case Mat.Sand:
+                                processed = ProcessPowder(sandbox, chunk, x + chunk.WorldX, y + chunk.WorldY);
+                                break;
+                            case Mat.Stone:
+                                break;
+                            case Mat.Water:
+                                processed = ProcessLiquid(sandbox, chunk, x + chunk.WorldX, y + chunk.WorldY);
+                                break;
+                        }
+
+                        if (!processed)
+                            pixels[x, y] = Msk.ToggleProcessed(pixels[x, y]);
+                    }
+                }
             }
         }
-
-        Constraints.Assert(sandbox);
     }
 
-    public static bool ProcessPowder(Sandbox sandbox, uint[,] pixels, int x, int y)
+    public static bool ProcessPowder(Sandbox sandbox, Chunk chunk, int x, int y)
     {
-        if (TrySwap(sandbox, pixels, x, y, x, y - 1))
+        if (TrySwap(sandbox, chunk, x, y, x, y - 1))
             return true;
 
-        if (TrySwap(sandbox, pixels, x, y, x - 1, y - 1))
+        if (TrySwap(sandbox, chunk, x, y, x - 1, y - 1))
             return true;
 
-        if (TrySwap(sandbox, pixels, x, y, x + 1, y - 1))
+        if (TrySwap(sandbox, chunk, x, y, x + 1, y - 1))
             return true;
 
         return false;
     }
 
-    public static bool ProcessLiquid(Sandbox sandbox, uint[,] pixels, int x, int y)
+    public static bool ProcessLiquid(Sandbox sandbox, Chunk chunk, int x, int y)
     {
-        if (TrySwap(sandbox, pixels, x, y, x, y - 1))
+        if (TrySwap(sandbox, chunk, x, y, x, y - 1))
             return true;
 
-        if (TrySwap(sandbox, pixels, x, y, x - 1, y - 1))
+        if (TrySwap(sandbox, chunk, x, y, x - 1, y - 1))
             return true;
 
-        if (TrySwap(sandbox, pixels, x, y, x + 1, y - 1))
+        if (TrySwap(sandbox, chunk, x, y, x + 1, y - 1))
             return true;
 
-        if (TrySwap(sandbox, pixels, x, y, x + 1, y))
+        if (TrySwap(sandbox, chunk, x, y, x + 1, y))
             return true;
 
-        if (TrySwap(sandbox, pixels, x, y, x - 1, y))
+        if (TrySwap(sandbox, chunk, x, y, x - 1, y))
             return true;
 
-        if (TrySwap(sandbox, pixels, x, y, x + 2, y))
+        if (TrySwap(sandbox, chunk, x, y, x + 2, y))
             return true;
 
-        if (TrySwap(sandbox, pixels, x, y, x - 2, y))
+        if (TrySwap(sandbox, chunk, x, y, x - 2, y))
             return true;
 
         return false;
     }
 
-    private static bool TrySwap(Sandbox sandbox, uint[,] pixels, int sx, int sy, int tx, int ty)
+    private static bool TrySwap(Sandbox sandbox, Chunk chunk, int sx, int sy, int tx, int ty)
     {
         if (ty < 0) return false;
         if (tx < 0) return false;
-        if (tx >= pixels.GetLength(0)) return false;
+        if (tx >= sandbox.Width) return false;
 
-        uint target = pixels[tx, ty];
-        uint source = pixels[sx, sy];
+        var sChunk = chunk;
+        var tChunk = chunk;
+        if (tx < chunk.WorldX || tx >= chunk.WorldX + chunk.Width)
+            tChunk = sandbox.GetChunkForPixel(tx, ty);
+        else if (ty < chunk.WorldY)
+            tChunk = sandbox.GetChunkForPixel(tx, ty);
+
+        var ltx = tx - tChunk.WorldX;
+        var lty = ty - tChunk.WorldY;
+        var lsx = sx - sChunk.WorldX;
+        var lsy = sy - sChunk.WorldY;
+
+        uint source = sChunk.Pixels.Data[lsx, lsy];
+        uint target = tChunk.Pixels.Data[ltx, lty];
         int tMat = (int)Msk.GetMat(target);
         int sMat = (int)Msk.GetMat(source);
         if (MatProps.Densities[sMat] > MatProps.Densities[tMat])
         {
-            var tProc = !Msk.GetProcessed(pixels[sx, sy]);
-            pixels[tx, ty] = Msk.SetProcessed(pixels[sx, sy], tProc);
-            pixels[sx, sy] = Msk.SetProcessed(target, tProc);
+            var tProc = !Msk.GetProcessed(source);
+            tChunk.Pixels.Data[ltx, lty] = Msk.SetProcessed(source, tProc);
+            sChunk.Pixels.Data[lsx, lsy] = Msk.SetProcessed(target, tProc);
             return true;
         }
 

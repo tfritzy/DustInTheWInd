@@ -12,16 +12,23 @@ public static class Constraints
     public static void Assert(Sandbox sandbox)
     {
         if (!IsInUnitTest) return;
-        var pixels = sandbox.Pixels.Data;
 
-        var targetProcessed = Msk.GetProcessed(pixels[0, 0]);
-        for (int x = 0; x < pixels.GetLength(0); x++)
+        var targetProcessed = Msk.GetProcessed(sandbox.Chunks[0, 0].Pixels.Data[0, 0]);
+        for (int cx = 0; cx < sandbox.Chunks.GetLength(0); cx++)
         {
-            for (int y = 0; y < pixels.GetLength(1); y++)
+            for (int cy = 0; cy < sandbox.Chunks.GetLength(1); cy++)
             {
-                if (targetProcessed != Msk.GetProcessed(pixels[x, y]))
+                var chunk = sandbox.Chunks[cx, cy];
+                var pixels = chunk.Pixels.Data;
+                for (int x = 0; x < pixels.GetLength(0); x++)
                 {
-                    throw new Exception($"Did not flip processed correctly at {x}, {y}. \n{sandbox.Pixels.GetProcessedString()}\n{sandbox.ToString()}");
+                    for (int y = 0; y < pixels.GetLength(1); y++)
+                    {
+                        if (targetProcessed != Msk.GetProcessed(pixels[x, y]))
+                        {
+                            throw new Exception($"Did not flip processed correctly at {x}, {y}");
+                        }
+                    }
                 }
             }
         }
